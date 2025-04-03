@@ -1,0 +1,488 @@
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import { useInView } from 'react-intersection-observer';
+import { Youtube, Star, Users, Target, Clock, Sparkles, Heart, Brain, Bot as Lotus, Compass, Target as Goal, Gem, Zap } from 'lucide-react';
+
+// Services array
+const services = [
+  {
+    category: "Reiki Healing",
+    icon: <Sparkles className="w-8 h-8" />,
+    description: "Ancient healing technique for energy balance and wellness",
+    image: "https://images.unsplash.com/photo-1600618528240-fb9fc964b853?auto=format&fit=crop&q=80",
+    items: ["Level 1", "Level 2", "Level 3", "Level 4"]
+  },
+  {
+    category: "Karuna Reiki",
+    icon: <Heart className="w-8 h-8" />,
+    description: "Advanced healing for deep emotional and spiritual growth",
+    image: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&q=80",
+    items: ["Basic", "Advanced", "Master Level"]
+  },
+  {
+    category: "Vastu Shastra",
+    icon: <Target className="w-8 h-8" />,
+    description: "Ancient architectural science for harmony",
+    image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80",
+    items: ["Vastu Shastra Visharad", "Vastu Shastra Bhushan", "Vastu Shastra Upay Yojana"]
+  },
+  {
+    category: "Hypnotherapy",
+    icon: <Brain className="w-8 h-8" />,
+    description: "Transform your mind and unlock potential",
+    image: "https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&q=80",
+    items: ["Swasanmohan (Self-Hypnosis)", "Clinical Hypnosis", "Magical Hypnosis"]
+  },
+  {
+    category: "Manifestation",
+    icon: <Lotus className="w-8 h-8" />,
+    description: "Harness the power of intention and energy",
+    image: "https://images.unsplash.com/photo-1490730141103-6cac27aaab94?auto=format&fit=crop&q=80",
+    items: ["Law of Attraction", "Magic Money Mantra"]
+  },
+  {
+    category: "Advanced Healing",
+    icon: <Star className="w-8 h-8" />,
+    description: "Specialized healing techniques for transformation",
+    image: "https://images.unsplash.com/photo-1528715471579-d1bcf0ba5e83?auto=format&fit=crop&q=80",
+    items: [
+      "Pranic Healing",
+      "Merkaba Healing",
+      "Pitru Dhyana Healing",
+      "Power of Trimurti",
+      "Dhanadharana Kundalini Yoga",
+      "Memory Boosting Reiki"
+    ]
+  }
+];
+
+// Testimonials array
+const testimonials = [
+  {
+    name: "Sarah Johnson",
+    image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80",
+    text: "The Reiki healing sessions transformed my life completely. I feel more balanced and energetic.",
+    role: "Spiritual Seeker"
+  },
+  {
+    name: "Michael Chen",
+    image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80",
+    text: "Vastu consultation helped improve the energy flow in my home and business dramatically.",
+    role: "Business Owner"
+  },
+  {
+    name: "Emma Williams",
+    image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80",
+    text: "The hypnotherapy sessions helped me overcome my anxieties and fears.",
+    role: "Wellness Coach"
+  }
+];
+
+// Featured videos array
+const featuredVideos = [
+  {
+    title: "Introduction to Reiki Healing",
+    thumbnail: "https://images.unsplash.com/photo-1528715471579-d1bcf0ba5e83?auto=format&fit=crop&q=80",
+    videoId: "video1"
+  },
+  {
+    title: "Understanding Vastu Shastra",
+    thumbnail: "https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&q=80",
+    videoId: "video2"
+  },
+  {
+    title: "Meditation for Beginners",
+    thumbnail: "https://images.unsplash.com/photo-1593811167562-9cef47bfc4d7?auto=format&fit=crop&q=80",
+    videoId: "video3"
+  },
+  {
+    title: "Chakra Balancing Guide",
+    thumbnail: "https://images.unsplash.com/photo-1514395462725-fb4566210426?auto=format&fit=crop&q=80",
+    videoId: "video4"
+  },
+  {
+    title: "Energy Healing Basics",
+    thumbnail: "https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&q=80",
+    videoId: "video5"
+  },
+  {
+    title: "Spiritual Growth Journey",
+    thumbnail: "https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?auto=format&fit=crop&q=80",
+    videoId: "video6"
+  }
+];
+
+// Astrology Services
+const astrologyServices = [
+  {
+    title: "Birth Chart Reading",
+    icon: <Star className="w-6 h-6" />,
+    description: "Comprehensive analysis of your natal chart",
+    price: "$150"
+  },
+  {
+    title: "Transit Predictions",
+    icon: <Compass className="w-6 h-6" />,
+    description: "Future forecasts based on planetary movements",
+    price: "$120"
+  },
+  {
+    title: "Relationship Compatibility",
+    icon: <Heart className="w-6 h-6" />,
+    description: "Synastry and composite chart analysis",
+    price: "$180"
+  },
+  {
+    title: "Career Guidance",
+    icon: <Target className="w-6 h-6" />,
+    description: "Professional path insights from your chart",
+    price: "$140"
+  },
+  {
+    title: "Spiritual Astrology",
+    icon: <Gem className="w-6 h-6" />,
+    description: "Karmic patterns and soul purpose reading",
+    price: "$200"
+  },
+  {
+    title: "Remedial Measures",
+    icon: <Zap className="w-6 h-6" />,
+    description: "Solutions to harmonize planetary energies",
+    price: "$160"
+  }
+];
+
+const fadeIn = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0 }
+};
+
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.2
+    }
+  }
+};
+
+export default function AboutUs() {
+  const [activeService, setActiveService] = useState(null);
+  const [showAllVideos, setShowAllVideos] = useState(false);
+  const { ref: servicesRef, inView: servicesInView } = useInView({ triggerOnce: true });
+  const { ref: testimonialsRef, inView: testimonialsInView } = useInView({ triggerOnce: true });
+  const { ref: videosRef, inView: videosInView } = useInView({ triggerOnce: true });
+  const { ref: astrologyRef, inView: astrologyInView } = useInView({ triggerOnce: true });
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-[#921a40]/5 via-[#921a40]/10 to-[#921a40]/5">
+      {/* Vision & Mission Section */}
+      <section className="relative pt-24 pb-32 overflow-hidden bg-[#921a40]">
+        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1507413245164-6160d8298b31?auto=format&fit=crop&q=80')] bg-cover bg-center opacity-20"></div>
+        <div className="container mx-auto px-4 relative z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-16"
+          >
+            <h1 className="text-5xl md:text-6xl font-bold text-white mb-6">
+              Our Vision & Mission
+            </h1>
+            <p className="text-xl text-white/80 max-w-3xl mx-auto">
+              Guiding souls through ancient wisdom and modern healing
+            </p>
+          </motion.div>
+
+          <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6 }}
+              className="bg-white/10 backdrop-blur-md p-8 rounded-2xl border border-white/20 hover:bg-white/20 transition-all duration-300"
+            >
+              <div className="flex items-center mb-6">
+                <div className="p-3 bg-white/20 rounded-lg mr-4">
+                  <Goal className="w-8 h-8 text-white" />
+                </div>
+                <h3 className="text-3xl font-bold text-white">Our Vision</h3>
+              </div>
+              <p className="text-white/90 text-lg leading-relaxed">
+                To empower individuals with sacred knowledge and healing techniques that illuminate their path 
+                to spiritual enlightenment, personal growth, and lasting prosperity.
+              </p>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6 }}
+              className="bg-white/10 backdrop-blur-md p-8 rounded-2xl border border-white/20 hover:bg-white/20 transition-all duration-300"
+            >
+              <div className="flex items-center mb-6">
+                <div className="p-3 bg-white/20 rounded-lg mr-4">
+                  <Compass className="w-8 h-8 text-white" />
+                </div>
+                <h3 className="text-3xl font-bold text-white">Our Mission</h3>
+              </div>
+              <p className="text-white/90 text-lg leading-relaxed">
+                To provide authentic and transformative spiritual services that create profound positive changes 
+                in people's lives through the perfect blend of ancient wisdom and modern healing techniques.
+              </p>
+            </motion.div>
+          </div>
+
+          {/* Feature Cards */}
+          <motion.div 
+            className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mt-16 max-w-6xl mx-auto"
+            variants={staggerContainer}
+            initial="hidden"
+            animate="visible"
+          >
+            {[
+              { icon: <Users />, title: "Expert Guides", desc: "Experienced Masters" },
+              { icon: <Star />, title: "Ancient Wisdom", desc: "Timeless Knowledge" },
+              { icon: <Heart />, title: "Healing Touch", desc: "Transformative Care" },
+              { icon: <Lotus />, title: "Divine Energy", desc: "Spiritual Growth" }
+            ].map((item, index) => (
+              <motion.div
+                key={index}
+                variants={fadeIn}
+                className="bg-white/10 backdrop-blur-md p-6 rounded-xl border border-white/20
+                         transform hover:-translate-y-2 transition-all duration-300"
+              >
+                <div className="text-white mb-4">{item.icon}</div>
+                <h3 className="text-white font-semibold mb-1">{item.title}</h3>
+                <p className="text-white/80 text-sm">{item.desc}</p>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Services Section */}
+      <motion.section 
+        ref={servicesRef}
+        className="py-24 bg-white"
+      >
+        <div className="container mx-auto px-4">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={servicesInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-4xl font-bold mb-6 text-[#921a40]">Our Sacred Services</h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              Discover our comprehensive range of spiritual and healing services.
+            </p>
+          </motion.div>
+
+          <motion.div 
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+            variants={staggerContainer}
+            initial="hidden"
+            animate={servicesInView ? "visible" : "hidden"}
+          >
+            {services.map((service, index) => (
+              <motion.div
+                key={index}
+                variants={fadeIn}
+                whileHover={{ scale: 1.02 }}
+                className="group relative overflow-hidden rounded-2xl shadow-xl"
+              >
+                <div className="relative h-64">
+                  <img 
+                    src={service.image} 
+                    alt={service.category}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent">
+                    <div className="absolute bottom-0 p-6 text-white">
+                      <div className="mb-3">{service.icon}</div>
+                      <h3 className="text-2xl font-bold mb-2">{service.category}</h3>
+                      <p className="text-white/80">{service.description}</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="bg-white p-6">
+                  <ul className="space-y-2">
+                    {service.items.map((item, idx) => (
+                      <li key={idx} className="flex items-center text-gray-700">
+                        <span className="w-2 h-2 bg-[#921a40] rounded-full mr-3" />
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </motion.section>
+
+      {/* Astrology Services Section */}
+      <motion.section
+        ref={astrologyRef}
+        className="py-24 bg-[#921a40]/5"
+      >
+        <div className="container mx-auto px-4">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={astrologyInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-4xl font-bold mb-6 text-[#921a40]">Astrology Services</h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              Unlock the secrets of the cosmos and discover your path with our expert astrology services.
+            </p>
+          </motion.div>
+
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            animate={astrologyInView ? "visible" : "hidden"}
+            className="grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6"
+          >
+            {astrologyServices.map((service, index) => (
+              <motion.div
+                key={index}
+                variants={fadeIn}
+                whileHover={{ y: -10 }}
+                className="bg-white p-4 md:p-8 rounded-2xl shadow-lg border-2 border-[#921a40]/10 hover:border-[#921a40]/30"
+              >
+                <div className="flex items-center justify-between mb-4 md:mb-6">
+                  <div className="p-2 md:p-3 bg-[#921a40]/10 rounded-lg">
+                    {service.icon}
+                  </div>
+                  <span className="text-xl md:text-2xl font-bold text-[#921a40]">{service.price}</span>
+                </div>
+                <h3 className="text-lg md:text-xl font-semibold text-[#921a40] mb-2 md:mb-3">{service.title}</h3>
+                <p className="text-sm md:text-base text-gray-600">{service.description}</p>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </motion.section>
+
+      {/* Video Grid Section */}
+      <motion.section
+        ref={videosRef}
+        className="py-24 bg-white"
+      >
+        <div className="container mx-auto px-4">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={videosInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-4xl font-bold mb-6 text-[#921a40]">Featured Videos</h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              Explore our collection of spiritual guidance and healing sessions.
+            </p>
+          </motion.div>
+
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            animate={videosInView ? "visible" : "hidden"}
+            className="grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8"
+          >
+            {featuredVideos.slice(0, showAllVideos ? featuredVideos.length : 6).map((video, index) => (
+              <motion.div
+                key={index}
+                variants={fadeIn}
+                whileHover={{ y: -10 }}
+                className="bg-white rounded-2xl shadow-lg overflow-hidden border-2 border-[#921a40]/10 hover:border-[#921a40]/30"
+              >
+                <div className="relative aspect-video">
+                  <img
+                    src={video.thumbnail}
+                    alt={video.title}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                    <Youtube className="w-12 h-12 md:w-16 md:h-16 text-white opacity-80" />
+                  </div>
+                </div>
+                <div className="p-4 md:p-6">
+                  <h3 className="text-lg md:text-xl font-semibold text-[#921a40] mb-2">{video.title}</h3>
+                  <p className="text-sm md:text-base text-gray-600">Click to watch the full video</p>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+
+          {featuredVideos.length > 6 && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5 }}
+              className="text-center mt-12"
+            >
+              <button
+                onClick={() => setShowAllVideos(!showAllVideos)}
+                className="bg-[#921a40] text-white px-8 py-3 rounded-full hover:bg-[#7a1635] 
+                         transition-colors duration-300"
+              >
+                {showAllVideos ? "Show Less" : "Load More"}
+              </button>
+            </motion.div>
+          )}
+        </div>
+      </motion.section>
+
+      {/* Testimonials */}
+      <motion.section
+        ref={testimonialsRef}
+        className="py-24 bg-[#921a40]/5"
+      >
+        <div className="container mx-auto px-4">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={testimonialsInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-4xl font-bold mb-6 text-[#921a40]">Transformative Experiences</h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              Hear from those who have experienced the power of our spiritual guidance and healing.
+            </p>
+          </motion.div>
+
+          <motion.div 
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
+            variants={staggerContainer}
+            initial="hidden"
+            animate={testimonialsInView ? "visible" : "hidden"}
+          >
+            {testimonials.map((testimonial, index) => (
+              <motion.div
+                key={index}
+                variants={fadeIn}
+                whileHover={{ y: -10 }}
+                className="bg-white p-8 rounded-2xl shadow-lg border-2 border-[#921a40]/10 hover:border-[#921a40]/30"
+              >
+                <div className="flex items-center mb-6">
+                  <img
+                    src={testimonial.image}
+                    alt={testimonial.name}
+                    className="w-16 h-16 rounded-full object-cover mr-4"
+                  />
+                  <div>
+                    <h4 className="font-semibold text-lg text-[#921a40]">{testimonial.name}</h4>
+                    <p className="text-gray-600">{testimonial.role}</p>
+                  </div>
+                </div>
+                <p className="text-gray-700 italic">"{testimonial.text}"</p>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </motion.section>
+    </div>
+  );
+}
