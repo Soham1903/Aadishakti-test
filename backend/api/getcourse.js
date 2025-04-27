@@ -1,4 +1,4 @@
-import dbConnection from "../../database/dbConnection.js"; // Connect to MongoDB
+import dbConnection from "../../lib/db.js"; // Connect to MongoDB
 import Course from "../../model/courseSchema.js";
 
 export default async function handler(req, res) {
